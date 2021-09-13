@@ -17,7 +17,7 @@ import 'package:fluent_validator/results/validation_failure.dart';
 import 'package:fluent_validator/results/validation_result.dart';
 
 typedef ExpressionName = String;
-typedef ExpressionFunc<T> = dynamic Function(dynamic value);
+typedef ExpressionFunc<T> = dynamic Function(T value);
 
 abstract class Rule {
   const Rule(this.errorMessage);
@@ -33,11 +33,11 @@ class RuleBuilder<T> {
   final Expression expression;
 }
 
-class Expression {
+class Expression<T> {
   Expression({required this.expressionName, required this.expressionFunc});
 
   final ExpressionName expressionName;
-  final ExpressionFunc expressionFunc;
+  final ExpressionFunc<T> expressionFunc;
   final List<Rule> _rules = [];
 
   void addRule(Rule rule) {
@@ -54,22 +54,24 @@ class ValidationContext {
 }
 
 abstract class Validator<T> {
-  final List<Expression> expressions = const [];
+  final List<Expression<T>> expressions = [];
   final ValidationContext _validationContext = ValidationContext();
+  late T objectToValidate;
 
-  ValidatorBuilder rulesFor(ExpressionName name, ExpressionFunc expressionFunc) {
-    final expression = Expression(expressionName: name, expressionFunc: expressionFunc);
+  ValidatorBuilder rulesFor(ExpressionName name, ExpressionFunc<T> expressionFunc) {
+    final expression = Expression<T>(expressionName: name, expressionFunc: expressionFunc);
     expressions.add(expression);
-    return ValidatorBuilder(expression, _validationContext);
+    return ValidatorBuilder<T>(expression, _validationContext);
   }
 
-  ValidationResult validate() {
+  ValidationResult validate(T object) {
+    objectToValidate = object;
     final validationFailures = expressions.map(_validateExpression).toList();
     return ValidationResult(validationFailures);
   }
 
-  ValidationFailure _validateExpression(Expression expression) {
-    final expressionValue = expression.expressionFunc;
+  ValidationFailure _validateExpression(Expression<T> expression) {
+    final dynamic expressionValue = expression.expressionFunc(objectToValidate);
 
     if (_isValidatorRegistered(expression)) {
       final a = _validateExpressionWithRegisteredValidator(expression);
@@ -77,7 +79,7 @@ abstract class Validator<T> {
     }
 
     final errors = expression._rules.map((rule) {
-      final isValid = rule.isValid(expression.expressionFunc);
+      final isValid = rule.isValid(expression.expressionFunc(objectToValidate));
       if (!isValid) {
         return rule.errorMessage;
       }
@@ -97,18 +99,20 @@ abstract class Validator<T> {
 
   ValidationResult _validateExpressionWithRegisteredValidator(Expression expression) {
     final validator = _validationContext.registeredValidatiors[expression.expressionName];
-    final validationResult = validator!.validate();
+    final dynamic expressionValue = expression.expressionFunc(objectToValidate);
+
+    final validationResult = validator!.validate(expressionValue);
     return validationResult;
   }
 }
 
-class ValidatorBuilder {
+class ValidatorBuilder<T> {
   const ValidatorBuilder(this.expression, this.validationContext);
 
-  final Expression expression;
+  final Expression<T> expression;
   final ValidationContext validationContext;
 
-  void setValidator(Validator validator) {
+  void setValidator(Validator<T> validator) {
     validationContext.registerValidator(expression.expressionName, validator);
   }
 

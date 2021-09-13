@@ -4,7 +4,7 @@ import 'package:fluent_validator/results/validation_result.dart';
 class ValidationFailure extends Equatable {
   const ValidationFailure({
     required this.name,
-    this.attemptedValue = Object,
+    this.attemptedValue = dynamic,
     required this.message,
   });
 
@@ -16,7 +16,7 @@ class ValidationFailure extends Equatable {
   }
 
   final String name;
-  final Object attemptedValue;
+  final dynamic attemptedValue;
   final String message;
 
   @override
