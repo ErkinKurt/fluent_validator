@@ -26,7 +26,7 @@ abstract class Validator<T> {
     final dynamic expressionValue = expression.expressionFunc(objectToValidate);
 
     if (_isValidatorRegistered(expression)) {
-      _validateExpressionWithRegisteredValidator(expression);
+      return _validateExpressionWithRegisteredValidator(expression);
     }
 
     final errors = expression.rules.map((rule) {
@@ -48,11 +48,15 @@ abstract class Validator<T> {
   bool _isValidatorRegistered(Expression expression) =>
       _validationContext.registeredValidatiors.containsKey(expression.expressionName);
 
-  ValidationResult _validateExpressionWithRegisteredValidator(Expression<T> expression) {
+  ValidationFailure _validateExpressionWithRegisteredValidator(Expression<T> expression) {
     final validator = _validationContext.registeredValidatiors[expression.expressionName];
     final dynamic expressionValue = expression.expressionFunc(objectToValidate);
 
     final validationResult = validator!.validate(expressionValue);
-    return validationResult;
+    return ValidationFailure(
+      name: expression.expressionName,
+      message: validationResult.errors.join(', '),
+      attemptedValue: expressionValue,
+    );
   }
 }
