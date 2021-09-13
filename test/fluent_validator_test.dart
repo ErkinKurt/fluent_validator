@@ -84,7 +84,6 @@ void main() {
     const nodeUser = NodeUser(null, NestedNodeUser('erkin'));
     const testUser = TestUser(null, nodeUser);
 
-    final a = testUserValidator.validate(testUser);
-    print(a);
+    testUserValidator.validate(testUser);
   });
 }

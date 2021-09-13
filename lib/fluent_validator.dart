@@ -1,7 +1,5 @@
 library fluent_validator;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'package:fluent_validator/core/validator.dart';
+export 'package:fluent_validator/core/rule.dart';
+export 'package:fluent_validator/core/validator_builder.dart';

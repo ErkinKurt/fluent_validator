@@ -4,32 +4,36 @@ import 'package:fluent_validator/core/validation_context.dart';
 import 'package:fluent_validator/core/validator_builder.dart';
 import 'package:fluent_validator/results/validation_failure.dart';
 import 'package:fluent_validator/results/validation_result.dart';
+import 'package:fluent_validator/rules/not_empty_rule.dart';
+import 'package:fluent_validator/rules/not_null_rule.dart';
+
+part 'validator_builder_extensions.dart';
 
 abstract class Validator<T> {
-  final List<Expression<T>> expressions = [];
+  final List<Expression<T>> _expressions = [];
   final ValidationContext _validationContext = ValidationContext();
-  late T objectToValidate;
+  late T _objectToValidate;
 
   ValidatorBuilder rulesFor(ExpressionName name, ExpressionFunc<T> expressionFunc) {
     final expression = Expression<T>(expressionName: name, expressionFunc: expressionFunc);
-    expressions.add(expression);
+    _expressions.add(expression);
     return ValidatorBuilder<T>(expression, _validationContext);
   }
 
   ValidationResult validate(T object) {
-    objectToValidate = object;
-    final validationFailures = expressions.map(_validateExpression).whereType<ValidationFailure>().toList();
+    _objectToValidate = object;
+    final validationFailures = _expressions.map(_validateExpression).whereType<ValidationFailure>().toList();
     return ValidationResult(validationFailures);
   }
 
   ValidationFailure? _validateExpression(Expression<T> expression) {
-    final dynamic expressionValue = expression.expressionFunc(objectToValidate);
+    final dynamic expressionValue = expression.expressionFunc(_objectToValidate);
     if (_isValidatorRegistered(expression)) {
       return _validateExpressionWithRegisteredValidator(expression);
     }
 
     final errors = expression.rules.map((rule) {
-      final isValid = rule.isValid(expression.expressionFunc(objectToValidate));
+      final isValid = rule.isValid(expression.expressionFunc(_objectToValidate));
       if (!isValid) {
         return rule.errorMessage;
       }
@@ -51,7 +55,7 @@ abstract class Validator<T> {
 
   ValidationFailure? _validateExpressionWithRegisteredValidator(Expression<T> expression) {
     final validator = _validationContext.registeredValidatiors[expression.expressionName];
-    final dynamic expressionValue = expression.expressionFunc(objectToValidate);
+    final dynamic expressionValue = expression.expressionFunc(_objectToValidate);
 
     final validationResult = validator!.validate(expressionValue);
     if (!validationResult.isValid) {
