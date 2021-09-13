@@ -1,5 +1,10 @@
-abstract class ValidationContext {
-  const ValidationContext(this.canThrowError);
+import 'package:fluent_validator/core/validator.dart';
+import 'package:fluent_validator/core/type_defs.dart';
 
-  final bool canThrowError;
+class ValidationContext {
+  final Map<ExpressionName, Validator> registeredValidatiors = {};
+
+  void registerValidator(ExpressionName expressionName, Validator validator) {
+    registeredValidatiors[expressionName] = validator;
+  }
 }

@@ -1,42 +1,9 @@
+import 'package:fluent_validator/core/expression.dart';
+import 'package:fluent_validator/core/type_defs.dart';
+import 'package:fluent_validator/core/validation_context.dart';
+import 'package:fluent_validator/core/validator_builder.dart';
 import 'package:fluent_validator/results/validation_failure.dart';
 import 'package:fluent_validator/results/validation_result.dart';
-
-typedef ExpressionName = String;
-typedef ExpressionFunc<T> = dynamic Function(T value);
-
-abstract class Rule {
-  const Rule(this.errorMessage);
-
-  final String errorMessage;
-
-  bool isValid(dynamic value);
-}
-
-class RuleBuilder<T> {
-  const RuleBuilder(this.expression);
-
-  final Expression expression;
-}
-
-class Expression<T> {
-  Expression({required this.expressionName, required this.expressionFunc});
-
-  final ExpressionName expressionName;
-  final ExpressionFunc<T> expressionFunc;
-  final List<Rule> _rules = [];
-
-  void addRule(Rule rule) {
-    _rules.add(rule);
-  }
-}
-
-class ValidationContext {
-  final Map<ExpressionName, Validator> registeredValidatiors = {};
-
-  void registerValidator(ExpressionName expressionName, Validator validator) {
-    registeredValidatiors[expressionName] = validator;
-  }
-}
 
 abstract class Validator<T> {
   final List<Expression<T>> expressions = [];
@@ -59,11 +26,10 @@ abstract class Validator<T> {
     final dynamic expressionValue = expression.expressionFunc(objectToValidate);
 
     if (_isValidatorRegistered(expression)) {
-      final a = _validateExpressionWithRegisteredValidator(expression);
-      print(a);
+      _validateExpressionWithRegisteredValidator(expression);
     }
 
-    final errors = expression._rules.map((rule) {
+    final errors = expression.rules.map((rule) {
       final isValid = rule.isValid(expression.expressionFunc(objectToValidate));
       if (!isValid) {
         return rule.errorMessage;
@@ -88,20 +54,5 @@ abstract class Validator<T> {
 
     final validationResult = validator!.validate(expressionValue);
     return validationResult;
-  }
-}
-
-class ValidatorBuilder<T> {
-  const ValidatorBuilder(this.expression, this.validationContext);
-
-  final Expression<T> expression;
-  final ValidationContext validationContext;
-
-  void setValidator(Validator validator) {
-    validationContext.registerValidator(expression.expressionName, validator);
-  }
-
-  void setRule(Rule rule) {
-    expression.addRule(rule);
   }
 }

@@ -1,4 +1,6 @@
+import 'package:fluent_validator/core/rule.dart';
 import 'package:fluent_validator/core/validator.dart';
+import 'package:fluent_validator/core/validator_builder.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class TestUser {
