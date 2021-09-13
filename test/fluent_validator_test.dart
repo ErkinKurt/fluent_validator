@@ -11,8 +11,9 @@ class TestUser {
 }
 
 class NodeUser {
-  const NodeUser(this.name);
+  const NodeUser(this.name, this.nestedNodeUser);
 
+  final NestedNodeUser nestedNodeUser;
   final String? name;
 }
 
@@ -31,9 +32,28 @@ class IsEmptyRule extends Rule {
   }
 }
 
+class LongerThanRule extends Rule {
+  LongerThanRule(this.lenght, String errorMessage) : super(errorMessage);
+
+  final int lenght;
+
+  @override
+  bool isValid(dynamic value) {
+    if (value is String) {
+      return value.length >= lenght;
+    }
+    throw UnimplementedError();
+  }
+}
+
 extension on ValidatorBuilder {
   ValidatorBuilder isEmpty() {
     setRule(IsEmptyRule('Cant be empty'));
+    return this;
+  }
+
+  ValidatorBuilder isLongerThan(int value) {
+    setRule(LongerThanRule(value, 'Should be longer than'));
     return this;
   }
 }
@@ -48,13 +68,20 @@ class TestUserValidator extends Validator<TestUser> {
 class NodeUserValidator extends Validator<NodeUser> {
   NodeUserValidator() {
     rulesFor('name', (NodeUser nodeUser) => nodeUser.name).isEmpty();
+    rulesFor('NestedNodeUser', (NodeUser nodeUser) => nodeUser.nestedNodeUser).setValidator(NestedNodeUserValidator());
+  }
+}
+
+class NestedNodeUserValidator extends Validator<NestedNodeUser> {
+  NestedNodeUserValidator() {
+    rulesFor('surname', (NestedNodeUser nestedNodeUser) => nestedNodeUser.surname).isEmpty().isLongerThan(10);
   }
 }
 
 void main() {
   test('ins aclisiit', () {
     final testUserValidator = TestUserValidator();
-    const nodeUser = NodeUser(null);
+    const nodeUser = NodeUser(null, NestedNodeUser('erkin'));
     const testUser = TestUser(null, nodeUser);
 
     final a = testUserValidator.validate(testUser);

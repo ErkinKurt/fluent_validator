@@ -18,13 +18,12 @@ abstract class Validator<T> {
 
   ValidationResult validate(T object) {
     objectToValidate = object;
-    final validationFailures = expressions.map(_validateExpression).toList();
+    final validationFailures = expressions.map(_validateExpression).whereType<ValidationFailure>().toList();
     return ValidationResult(validationFailures);
   }
 
-  ValidationFailure _validateExpression(Expression<T> expression) {
+  ValidationFailure? _validateExpression(Expression<T> expression) {
     final dynamic expressionValue = expression.expressionFunc(objectToValidate);
-
     if (_isValidatorRegistered(expression)) {
       return _validateExpressionWithRegisteredValidator(expression);
     }
@@ -34,29 +33,32 @@ abstract class Validator<T> {
       if (!isValid) {
         return rule.errorMessage;
       }
-    });
+    }).whereType<String>();
 
-    final validationFailure = ValidationFailure(
-      name: expression.expressionName,
-      attemptedValue: expressionValue,
-      message: errors.join(', '),
-    );
+    if (errors.isNotEmpty) {
+      final validationFailure = ValidationFailure(
+        name: '$T.${expression.expressionName}',
+        attemptedValue: expressionValue,
+        message: errors.join(', '),
+      );
 
-    return validationFailure;
+      return validationFailure;
+    }
   }
 
   bool _isValidatorRegistered(Expression expression) =>
       _validationContext.registeredValidatiors.containsKey(expression.expressionName);
 
-  ValidationFailure _validateExpressionWithRegisteredValidator(Expression<T> expression) {
+  ValidationFailure? _validateExpressionWithRegisteredValidator(Expression<T> expression) {
     final validator = _validationContext.registeredValidatiors[expression.expressionName];
     final dynamic expressionValue = expression.expressionFunc(objectToValidate);
 
     final validationResult = validator!.validate(expressionValue);
-    return ValidationFailure(
-      name: expression.expressionName,
-      message: validationResult.errors.join(', '),
-      attemptedValue: expressionValue,
-    );
+    if (!validationResult.isValid) {
+      return ValidationFailure(
+        name: '$T.${expression.expressionName}',
+        message: validationResult.errors.join(', '),
+      );
+    }
   }
 }
