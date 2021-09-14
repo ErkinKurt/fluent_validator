@@ -10,4 +10,9 @@ extension CustomBuilders on ValidatorBuilder {
     setRule(NotEmptyRule('Value should not be empty'));
     return this;
   }
+
+  ValidatorBuilder must(Predicate predicate) {
+    setRule(MustRule(predicate, 'The specified condition was not met'));
+    return this;
+  }
 }
