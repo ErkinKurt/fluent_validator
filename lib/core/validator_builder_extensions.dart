@@ -15,4 +15,12 @@ extension CustomBuilders on ValidatorBuilder {
     setRule(MustRule<T>(predicate, 'The specified condition was not met'));
     return this;
   }
+
+  ValidatorBuilder emailAddress({RegExp? pattern}) {
+    setRule(EmailRule(
+      'Email is not a valid email address.',
+      emailRegExp: pattern,
+    ));
+    return this;
+  }
 }

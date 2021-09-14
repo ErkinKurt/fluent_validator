@@ -4,6 +4,7 @@ import 'package:fluent_validator/core/validation_context.dart';
 import 'package:fluent_validator/core/validator_builder.dart';
 import 'package:fluent_validator/results/validation_failure.dart';
 import 'package:fluent_validator/results/validation_result.dart';
+import 'package:fluent_validator/rules/email_rule.dart';
 import 'package:fluent_validator/rules/must_rule.dart';
 import 'package:fluent_validator/rules/not_empty_rule.dart';
 import 'package:fluent_validator/rules/not_null_rule.dart';
