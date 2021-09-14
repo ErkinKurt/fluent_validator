@@ -26,6 +26,13 @@ void main() {
 
         expect(false, validationResult.isValid);
       });
+
+      test('should return valid validation result' ' when value is not null', () {
+        const testClass = TestClass('prop1');
+        final validationResult = testValidator.validate(testClass);
+
+        expect(true, validationResult.isValid);
+      });
     });
   });
 }
