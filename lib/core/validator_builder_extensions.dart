@@ -11,8 +11,8 @@ extension CustomBuilders on ValidatorBuilder {
     return this;
   }
 
-  ValidatorBuilder must(Predicate predicate) {
-    setRule(MustRule(predicate, 'The specified condition was not met'));
+  ValidatorBuilder must<T>(Predicate<T> predicate) {
+    setRule(MustRule<T>(predicate, 'The specified condition was not met'));
     return this;
   }
 }
