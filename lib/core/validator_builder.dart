@@ -4,16 +4,16 @@ import 'package:fluent_validator/core/validation_context.dart';
 import 'package:fluent_validator/core/validator.dart';
 
 class ValidatorBuilder<T> {
-  const ValidatorBuilder(this.expression, this.validationContext);
+  const ValidatorBuilder(this._expression, this._validationContext);
 
-  final Expression<T> expression;
-  final ValidationContext validationContext;
+  final Expression<T> _expression;
+  final ValidationContext _validationContext;
 
   void setValidator(Validator validator) {
-    validationContext.registerValidator(expression.expressionName, validator);
+    _validationContext.registerValidator(_expression.expressionName, validator);
   }
 
   void setRule(Rule rule) {
-    expression.addRule(rule);
+    _expression.addRule(rule);
   }
 }
