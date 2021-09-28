@@ -23,4 +23,9 @@ extension CustomBuilders on ValidatorBuilder {
     ));
     return this;
   }
+
+  ValidatorBuilder longerThan(int length) {
+    setRule(LongerThanRule(length, 'Value is longer than $length'));
+    return this;
+  }
 }
