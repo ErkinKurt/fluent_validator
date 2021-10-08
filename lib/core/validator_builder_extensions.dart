@@ -33,4 +33,9 @@ extension CustomBuilders on ValidatorBuilder {
     setRule(BiggerThanRule(number, 'Value is bigger than $number'));
     return this;
   }
+
+  ValidatorBuilder isUrl() {
+    setRule(UrlRule('Value should be a URL'));
+    return this;
+  }
 }
