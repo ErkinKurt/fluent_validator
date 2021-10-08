@@ -28,4 +28,9 @@ extension CustomBuilders on ValidatorBuilder {
     setRule(LongerThanRule(length, 'Value is longer than $length'));
     return this;
   }
+
+  ValidatorBuilder biggerThan(double number) {
+    setRule(BiggerThanRule(number, 'Value is bigger than $number'));
+    return this;
+  }
 }

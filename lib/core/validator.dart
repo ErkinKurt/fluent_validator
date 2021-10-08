@@ -4,6 +4,7 @@ import 'package:fluent_validator/core/validation_context.dart';
 import 'package:fluent_validator/core/validator_builder.dart';
 import 'package:fluent_validator/results/validation_failure.dart';
 import 'package:fluent_validator/results/validation_result.dart';
+import 'package:fluent_validator/rules/bigger_than_rule.dart';
 import 'package:fluent_validator/rules/email_rule.dart';
 import 'package:fluent_validator/rules/longer_than_rule.dart';
 import 'package:fluent_validator/rules/must_rule.dart';
