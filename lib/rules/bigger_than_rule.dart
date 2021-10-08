@@ -1,14 +1,14 @@
 import 'package:fluent_validator/core/rule.dart';
 
 class BiggerThanRule extends Rule {
-  BiggerThanRule(this.lenght, String errorMessage) : super(errorMessage);
+  BiggerThanRule(this.number, String errorMessage) : super(errorMessage);
 
-  final double lenght;
+  final num number;
 
   @override
   bool isValid(dynamic value) {
-    if (value is double) {
-      return value > lenght;
+    if (value is num) {
+      return value > number;
     }
     throw UnimplementedError();
   }
