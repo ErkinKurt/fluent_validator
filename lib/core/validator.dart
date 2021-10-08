@@ -10,6 +10,7 @@ import 'package:fluent_validator/rules/longer_than_rule.dart';
 import 'package:fluent_validator/rules/must_rule.dart';
 import 'package:fluent_validator/rules/not_empty_rule.dart';
 import 'package:fluent_validator/rules/not_null_rule.dart';
+import 'package:fluent_validator/rules/url_rule.dart';
 
 part 'validator_builder_extensions.dart';
 
