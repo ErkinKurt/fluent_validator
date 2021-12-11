@@ -9,6 +9,9 @@
 .history
 .svn/
 
+# FVM
+/.fvm
+
 # IntelliJ related
 *.iml
 *.ipr
